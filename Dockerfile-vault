@@ -1,0 +1,9 @@
+FROM alpine AS build
+
+RUN apk add openssl
+RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /server.key -out /server.crt -subj "/C=UK/ST=Greater London/L=London/O=AMA Network/OU=IT Department/CN=vault.amasucci.com"
+
+FROM vault:1.2.3
+
+COPY --from=build /server.key /vault/config/certs/server.key
+COPY --from=build /server.crt /vault/config/certs/server.crt
